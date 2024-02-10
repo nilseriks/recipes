@@ -32,19 +32,19 @@ optimised by DFTB+::
        2    2    0.00000000000E+00   0.00000000000E+00   0.78306400000E+00
        3    2    0.00000000000E+00   0.00000000000E+00  -0.78306400000E+00
   }
-  
+
   Driver = ConjugateGradient {
     MovedAtoms = 1:-1
     MaxForceComponent = 1.0e-4
     MaxSteps = 100
     OutputPrefix = "geom.out"
   }
-  
+
   Hamiltonian = DFTB {
     Scc = Yes
     SccTolerance = 1.0e-5
     SlaterKosterFiles = Type2FileNames {
-      Prefix = "../../slakos/mio-ext/"
+      Prefix = "../slako/mio-1-1/"
       Separator = "-"
       Suffix = ".skf"
     }
@@ -53,7 +53,7 @@ optimised by DFTB+::
       H = "s"
     }
   }
-  
+
   Options {
     WriteDetailedXml = Yes
   }
@@ -61,7 +61,7 @@ optimised by DFTB+::
   Analysis {
     WriteEigenvectors = Yes
   }
-  
+
   ParserOptions {
     ParserVersion = 9
   }
@@ -90,33 +90,36 @@ The appropriate waveplot input (``waveplot_in.hsd``) could look like the
 following::
 
   # General options
-  
+
   Options {
     TotalChargeDensity = Yes           # Total density be plotted?
     TotalChargeDifference = Yes        # Total density difference plotted?
     ChargeDensity = Yes                # Charge density for each state?
     RealComponent = Yes                # Plot real component of the wavefunction
-    PlottedSpins = 1 -1 
+    PlottedSpins = 1 -1
     PlottedLevels = 4                  # Levels to plot
     PlottedRegion =  OptimalCuboid {}  # Region to plot
-  
-    NrOfPoints = 50 50 50              # Number of grid points in each direction
-    NrOfCachedGrids = -1               # Nr of cached grids (speeds up things)
+    RadialWFTabulation = explicit      # explicit calculation used to tabulate radial WF
+    GridInterpolation = explicit       # explicit calculation of STOs
+
+    TotGridPoints = 80 80 80           # Number of total grid points in each direction
+    SpGridPoints = 80 80 80			       # Number of species grid points in each direction
     Verbose = Yes                      # Wanna see a lot of messages?
+    NrOfCachedGrids = -1               # Speed things up with caching of grids
   }
-  
+
   DetailedXml = "detailed.xml"         # File containing the detailed xml output
                                        # of DFTB+
   EigenvecBin = "eigenvec.bin"         # File cointaining the binary eigenvecs
-  
-  
+
+
   # Definition of the basis
   Basis {
     Resolution = 0.01
     # Including mio-1-1.hsd. (If you use a set, which depends on other sets,
     # the wfc.*.hsd files for each required set must be included in a similar
     # way.)
-    <<+ "../../slakos/wfc/wfc.mio-1-1.hsd"  
+    <<+ "../slako/wfc/wfc.mio-1-1.hsd"
   }
 
 
@@ -148,8 +151,7 @@ Some notes to the input:
   which contains all the atoms and enough space around them, so that the
   wavefunctions are not leaking out of it. (For details and other options for
   ``PlottedRegion`` please consult the manual.)  The selected region in the
-  example is sampled by a mesh of 50 by 50 by
-  50.  (``NrOfPoints``)
+  example is sampled by a mesh of 80 by 80 by 80.  (``NrOfPoints``)
 
 * The basis defintion (``Basis``) is made by including the file containing the
   appropriate wave function coefficient definitions.  You must make sure that
@@ -167,64 +169,52 @@ Output
 ::
 
   ================================================================================
-       WAVEPLOT  0.2
+      WAVEPLOT  0.3
   ================================================================================
-  
+
   Interpreting input file 'waveplot_in.hsd'
-  --------------------------------------------------------------------------------
   WARNING!
-  -> The following 3 node(s) had been ignored by the parser:
+  -> The following 2 node(s) have been ignored by the parser:
   (1)
   Path: waveplot/Basis/C
-  Line: 1-33 (File: wfc.mio-0-1.hsd)
+  Line: 1-33 (File: ../slako/wfc/wfc.mio-1-1.hsd)
   (2)
   Path: waveplot/Basis/N
-  Line: 52-84 (File: wfc.mio-0-1.hsd)
-  (3)
-  Path: waveplot/Basis/S
-  Line: 120-170 (File: wfc.mio-0-1.hsd)
-  
+  Line: 52-84 (File: ../slako/wfc/wfc.mio-1-1.hsd)
+
   Processed input written as HSD to 'waveplot_pin.hsd'
-  Processed input written as XML to 'waveplot_pin.xml'
   --------------------------------------------------------------------------------
-  
+
   Doing initialisation
-  
+
   Starting main program
-  
+
   Origin
-    -5.00000 -6.35306 -6.47114
+    -5.00000 -6.35304 -6.47115
+  Total-Grid Origin
+    -4.93750 -6.28376 -6.39026
   Box
-    10.00000 0.00000 0.00000
-    0.00000 11.08472 0.00000
-    0.00000 0.00000 12.94228
+    10.00000 .00000 .00000
+    .00000 11.08469 .00000
+    .00000 .00000 12.94230
   Spatial resolution [1/Bohr]:
-    5.00000 4.51071 3.86331
-  
-  Total charge of atomic densities:    7.981973
-  
-  
-   Spin KPoint  State  Action        Norm   W. Occup.
-      1      1      1    read
-      1      1      2    read
-      1      1      3    read
-      1      1      4    read
-  
-  Calculating grid
-  
-      1      1      1    calc    0.996855    2.000000
-      1      1      2    calc    1.003895    2.000000
-      1      1      3    calc    0.998346    2.000000
-      1      1      4    calc    1.000053    2.000000
+    8.00000 7.21716 6.18128
+
+  Total charge of atomic densities:    7.994165
+
+
+  Spin KPoint  State  Action        Norm   W. Occup.
+      1      1      1    calc    1.001563    2.000000
+      1      1      2    calc    1.003215    2.000000
+      1      1      3    calc    0.999790    2.000000
+      1      1      4    calc    0.999994    2.000000
   File 'wp-1-1-4-abs2.cube' written
   File 'wp-1-1-4-real.cube' written
   File 'wp-abs2.cube' written
-  
-  Total charge:    7.998297
-  
+
+  Total charge:    8.009123
+
   File 'wp-abs2diff.cube' written
-  
-  ================================================================================
 
 Some notes on the output:
 
@@ -236,9 +226,10 @@ Some notes on the output:
 * The ``Total charge of atomic densities`` tells you the amount of charge found
   in the selected region, if atomic densities are superposed. This number should
   be approximately equal to the number of electrons in your system (here 8).
-  There could be two reasons for a substantial deviation. Either the grid is not
-  dense enough (option ``NrOfPoints``) or the box for the plotted region is too
-  small or misplaced (``PlottedRegion``).
+  There could be two reasons for a substantial deviation. Either one of the
+  grids is not dense enough (option ``TotGridPoints`` or ``SpeciesGridPoints``)
+  or the box for the plotted region is too small or misplaced
+  (``PlottedRegion``).
 
 * The output files for the individual levels (charge density, real part,
   imaginary part) follow the naming convention `wp-KPOINT-SPIN-LEVEL-TYPE.cube`.
@@ -253,7 +244,7 @@ Visualising the results
 The volumetric data generated by Waveplot is in the Gaussian cube format and can
 be visualized with several graphical tools (VMD, JMol, ParaView, ...). Below we
 show the necessary steps to visualize it using VMD. (It refers to VMD version
-1.8.6 and may differ in newer versions.)
+1.9.3 and may differ in newer versions.)
 
 
 Total charge distribution
@@ -284,7 +275,7 @@ color had been set to white using the ``Graphics|Colors`` menu.)
 
      Total charge density for the H2O molecule, created by Waveplot, visualised
      by VMD.
-     
+
 
 
 Charge distribution difference
